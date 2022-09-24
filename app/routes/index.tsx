@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,6 +10,9 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { json, LoaderFunction } from "@remix-run/node";
+import axios from "axios";
+import { useLoaderData } from "@remix-run/react";
 
 ChartJS.register(
   CategoryScale,
@@ -67,6 +70,29 @@ export const data = {
   ],
 };
 
+export const loader: LoaderFunction = async ({ params }) => {
+  const body = {
+    reftype: "area",
+    refid: "SUBC000109",
+    date: "2022",
+  };
+  let data = axios({
+    method: "post",
+    url: "https://wsvc01.police.gov.mv/mobile/olservices/getStatsByID",
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+    data: body,
+  }).then((respose) => {
+    return json(respose?.data);
+  });
+  return data;
+};
+
 export default function App() {
+  const loaderData = useLoaderData();
+  const [selectedCrimeType, setSelectedCrimeType] = useState();
+
+  console.log(loaderData);
   return <Line options={options} data={data} />;
 }

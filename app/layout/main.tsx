@@ -39,7 +39,8 @@ export default function MainLayout({ children }: PropsWithChildren) {
             alignItems: "center",
             textAlign: "center",
             justifyContent: "space-between",
-            overflow: "auto",
+            overflowX: "auto",
+            overflowY: "hidden",
           }}
         >
           {[

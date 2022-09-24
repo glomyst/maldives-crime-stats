@@ -74,7 +74,12 @@ export function CardItem({ title, description, url }: CardProps) {
       </ThemeIcon>
 
       <div>
-        <Text weight={700} size="lg" className={classes.itemTitle}>
+        <Text
+          weight={700}
+          size="lg"
+          className={classes.itemTitle}
+          color={"red"}
+        >
           {title}
         </Text>
         <Text color="dimmed">{description}</Text>

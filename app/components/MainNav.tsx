@@ -1,5 +1,5 @@
 import { Navbar, Paper } from "@mantine/core";
-import React from "react";
+import { useLocalStorage } from "@mantine/hooks";
 import { CardItem } from "./CardItem";
 
 type Props = {
@@ -65,6 +65,13 @@ const navItems = [
 ];
 
 export const MainNav = ({ opened }: Props) => {
+  const [selectedCrime, setSelectedCrime] = useLocalStorage({
+    key: "slected-crime",
+    defaultValue: "dark",
+  });
+
+  console.log(selectedCrime);
+
   return (
     <Navbar
       p="md"
@@ -77,19 +84,28 @@ export const MainNav = ({ opened }: Props) => {
         return (
           <Paper
             key={i}
-            shadow={i === 1 ? "xs" : ""}
+            shadow={item.label === selectedCrime ? "xs" : ""}
             withBorder
             style={{
               padding: "5px",
               marginBottom: "10px",
-              background: i === 1 ? "ghostwhite" : "none",
+              background: item.label === selectedCrime ? "#fff5b1" : "none",
             }}
           >
-            <CardItem
-              title={item.label}
-              description={item.description}
-              url={item.url}
-            />
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                setSelectedCrime(item?.label);
+              }}
+              style={{ textDecoration: "none" }}
+            >
+              <CardItem
+                title={item.label}
+                description={item.description}
+                url={item.url}
+              />
+            </a>
           </Paper>
         );
       })}
