@@ -4,6 +4,8 @@ import { Circle, CircleCheck } from "tabler-icons-react";
 
 type Props = {};
 
+const navItems = [{ label: "LH. Atoll", value: "" }];
+
 export const SecondaryNav = ({}: Props) => {
   return (
     <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
