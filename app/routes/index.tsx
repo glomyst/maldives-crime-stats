@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,9 +9,10 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { json, LoaderFunction } from "@remix-run/node";
-import axios from "axios";
-import { useLoaderData } from "@remix-run/react";
+import { useLocalStorage } from "@mantine/hooks";
+import { Button } from "@mantine/core";
+import { fetchPoliceApiData, random_rgba } from "~/util/global";
+import React, { useEffect, useState } from "react";
 
 ChartJS.register(
   CategoryScale,
@@ -52,7 +52,7 @@ const labels = [
   "December",
 ];
 
-export const data = {
+export const dataa = {
   labels,
   datasets: [
     {
@@ -70,29 +70,41 @@ export const data = {
   ],
 };
 
-export const loader: LoaderFunction = async ({ params }) => {
-  const body = {
-    reftype: "area",
-    refid: "SUBC000109",
-    date: "2022",
-  };
-  let data = axios({
-    method: "post",
-    url: "https://wsvc01.police.gov.mv/mobile/olservices/getStatsByID",
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-    data: body,
-  }).then((respose) => {
-    return json(respose?.data);
-  });
-  return data;
-};
-
 export default function App() {
-  const loaderData = useLoaderData();
-  const [selectedCrimeType, setSelectedCrimeType] = useState();
+  const ref = React.createRef();
 
-  console.log(loaderData);
-  return <Line options={options} data={data} />;
+  const [data, setData] = useState(dataa);
+  useEffect(() => {
+    setData(data);
+  }, [data?.datasets?.length]);
+  const [selectedCrime] = useLocalStorage({
+    key: "slected-crime",
+    defaultValue: "",
+  });
+
+  const handleDataLoad = async () => {
+    let dataApi = await fetchPoliceApiData(
+      selectedCrime,
+      "atoll",
+      "ATL11",
+      "2021"
+    );
+
+    let tempdata = { ...data };
+    tempdata?.datasets.push({
+      label: selectedCrime,
+      data: dataApi,
+      borderColor: random_rgba(),
+      backgroundColor: random_rgba(),
+    });
+
+    setData(tempdata);
+  };
+
+  return (
+    <>
+      {data?.datasets?.length && <Line options={options} data={data} redraw />}
+      <Button onClick={() => handleDataLoad()}>Fetch data</Button>
+    </>
+  );
 }

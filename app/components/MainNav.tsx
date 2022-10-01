@@ -70,8 +70,6 @@ export const MainNav = ({ opened }: Props) => {
     defaultValue: "dark",
   });
 
-  console.log(selectedCrime);
-
   return (
     <Navbar
       p="md"
